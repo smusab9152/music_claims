@@ -3,71 +3,44 @@
 A repository for managing music-related claims and potentially tracking royalties or rights.  
 
 ```
-┌──────────────────────┐
-│        START         │
-│  (Setup & Auth)      │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│  Initialize Spotipy  │
-│  (Get Access Token)  │
-└──────────┬───────────┘
-           │
-           ▼
-┌─────────────────────────────────────────────────────────────┐
-│ LOOP A (Album Pagination): Fetch All Releases (Albums/Singles)
-└──────────┬──────────────────────────────────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────────────────────────────┐
-│ LOOP B (Album Iteration): FOR each unique release found  │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ REQUEST 2: Fetch first batch of Tracks for this Album│ │
-│ └──────────┬───────────────────────────────────────────┘ │
-│            │                                             │
-│            ▼                                             │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ LOOP C (Track Pagination): Collect all tracks pages  │ │
-│ │   Collect all tracks into 'tracks_in_album'.         │ │
-│ └──────────┬───────────────────────────────────────────┘ │
-│            │                                             │
-│            ▼                                             │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ Process: Filter out already 'processed_track_ids'    │ |
-│ │ (Ensures ISRC is fetched only once per unique track) │ |
-│ └──────────┬───────────────────────────────────────────┘ │
-│            │                                             │
-│            ▼                                             │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ LOOP D (Batching & ISRC): Iterate over batches (50)  │ │
-│ │ ┌──────────────────────────────────────────────────┐ │ │
-│ │ │ REQUEST 3: Fetch Full Track Details (Contains ISRC)│ │
-│ │ └──────────┬───────────────────────────────────────┘ │ │
-│ │            │                                         │ │
-│ │            ▼                                         │ │
-│ │ ┌──────────────────────────────────────────────────┐ │ │
-│ │ │ LOOP E (Data Collection): Process track results  │ │ │
-│ │ │   Extract Data & Append to 'raw_catalog'         │ │ │
-│ │ │   Add Track ID to 'processed_track_ids' set      │ │ │
-│ │ └──────────────────────────────────────────────────┘ │ │
-│ └──────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────────────────────────┐
-│ Polars Transformation and Cleaning                   │
-│ 1. Create Polars DF: pl.DataFrame(raw_catalog)       │
-│ 2. Deduplicate: df.unique(subset=['Track_ID'])       │
-│ 3. Sort: df.sort('Release_Date', descending=True)    │
-├──────────────────────────────────────────────────────┤
-│ Export: df.write_csv(filename)                       │
-└──────────┬───────────────────────────────────────────┘
-           │
-           ▼
-┌──────────────────────┐
-│         END          │
-└──────────────────────┘
+START (Setup & Auth)
+   │
+   ▼
+Initialize Spotipy (Get Access Token)
+   │
+   ▼
+LOOP A: Album Pagination → Fetch All Releases (Albums/Singles)
+   │
+   ▼
+LOOP B: Album Iteration → For each unique release found
+   │
+   ▼
+REQUEST 2: Fetch first batch of Tracks for this Album
+   │
+   ▼
+LOOP C: Track Pagination → Collect all tracks pages → Collect all tracks into 'tracks_in_album'
+   │
+   ▼
+Process: Filter out already 'processed_track_ids' (Ensures ISRC is fetched only once per unique track)
+   │
+   ▼
+LOOP D: Batching & ISRC → Iterate over batches (50)
+   │
+   ▼
+REQUEST 3: Fetch Full Track Details (Contains ISRC)
+   │
+   ▼
+LOOP E: Data Collection → Process track results → Extract Data & Append to 'raw_catalog' → Add Track ID to 'processed_track_ids' set
+   │
+   ▼
+Polars Transformation and Cleaning:
+    1. Create Polars DF: pl.DataFrame(raw_catalog)
+    2. Deduplicate: df.unique(subset=['Track_ID'])
+    3. Sort: df.sort('Release_Date', descending=True)
+    4. Export: df.write_csv(filename)
+   │
+   ▼
+END
 ```
 
 
