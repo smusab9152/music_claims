@@ -1,5 +1,9 @@
-Spotify Artist Catalog Exporter (Polars)🎶 OverviewThis Python script is designed to retrieve the complete discography for a specified artist from the Spotify Web API. It efficiently handles data complexity by performing two levels of pagination (for albums and tracks) and making batched API calls to retrieve the crucial ISRC (International Standard Recording Code) for every unique track.The final dataset is cleaned, deduplicated, and transformed using the high-performance Polars data frame library before being exported to a CSV file.PrerequisitesTo run this script, you need:Python 3.8+Required Libraries:pip install spotipy polars
-Spotify API Credentials: A CLIENT_ID and CLIENT_SECRET obtained by creating an application in the [Spotify Developer Dashboard].🏗️ Data Retrieval WorkflowThe code logic is highly structured to manage the nested nature of the Spotify API's data structure (Artist → Album/Release → Track).The overall process is a three-phase pipeline: Initialization, Retrieval, and Transformation.Codelogic DiagramThe key to this pipeline is the transition from broad releases to individual tracks and the necessary second API call (Request 3) to fetch the ISRC.┌──────────────────────┐
+# Music Claims
+
+A repository for managing music-related claims and potentially tracking royalties or rights.  
+
+```
+┌──────────────────────┐
 │        START         │
 │  (Setup & Auth)      │
 └──────────┬───────────┘
@@ -21,27 +25,27 @@ Spotify API Credentials: A CLIENT_ID and CLIENT_SECRET obtained by creating an a
 │ ┌──────────────────────────────────────────────────────┐ │
 │ │ REQUEST 2: Fetch first batch of Tracks for this Album│ │
 │ └──────────┬───────────────────────────────────────────┘ │
-│            │                                            │
-│            ▼                                            │
+│            │                                             │
+│            ▼                                             │
 │ ┌──────────────────────────────────────────────────────┐ │
 │ │ LOOP C (Track Pagination): Collect all tracks pages  │ │
 │ │   Collect all tracks into 'tracks_in_album'.         │ │
 │ └──────────┬───────────────────────────────────────────┘ │
-│            │                                            │
-│            ▼                                            │
+│            │                                             │
+│            ▼                                             │
 │ ┌──────────────────────────────────────────────────────┐ │
-│ │ Process: Filter out already 'processed_track_ids'    │
-│ │ (Ensures ISRC is fetched only once per unique track) │
+│ │ Process: Filter out already 'processed_track_ids'    │ |
+│ │ (Ensures ISRC is fetched only once per unique track) │ |
 │ └──────────┬───────────────────────────────────────────┘ │
-│            │                                            │
-│            ▼                                            │
+│            │                                             │
+│            ▼                                             │
 │ ┌──────────────────────────────────────────────────────┐ │
 │ │ LOOP D (Batching & ISRC): Iterate over batches (50)  │ │
 │ │ ┌──────────────────────────────────────────────────┐ │ │
 │ │ │ REQUEST 3: Fetch Full Track Details (Contains ISRC)│ │
 │ │ └──────────┬───────────────────────────────────────┘ │ │
-│ │            │                                        │ │
-│ │            ▼                                        │ │
+│ │            │                                         │ │
+│ │            ▼                                         │ │
 │ │ ┌──────────────────────────────────────────────────┐ │ │
 │ │ │ LOOP E (Data Collection): Process track results  │ │ │
 │ │ │   Extract Data & Append to 'raw_catalog'         │ │ │
@@ -64,23 +68,51 @@ Spotify API Credentials: A CLIENT_ID and CLIENT_SECRET obtained by creating an a
 ┌──────────────────────┐
 │         END          │
 └──────────────────────┘
+```
 
----
 
-## 🛠️ Usage
 
-1.  **Configure Credentials:** Open the script and replace the placeholder values for `CLIENT_ID`, `CLIENT_SECRET`, and define the `ARTIST_ID` you wish to analyze.
+## Features
 
-    ```python
-    CLIENT_ID = 'YOUR_CLIENT_ID'
-    CLIENT_SECRET = 'YOUR_CLIENT_SECRET'
-    ARTIST_ID = '4Z8W4fKeB5YxbusRsdQVPb' # Example: Radiohead
-    ```
+- Manage music claims (details to be filled in as repository grows)
+- Track rights and possibly royalties (expand as implementation progresses)
+- Open for contributions and improvements
 
-2.  **Run the Script:**
+## Installation
 
-    ```bash
-    python full_spotify_catalog_polars_simplified.py
-    ```
+Clone the repository:
+```bash
+git clone https://github.com/smusab9152/music_claims.git
+cd music_claims
+```
+Install dependencies (add specific instructions for your tech stack here):
 
-3.  **Check Output:** The script will generate a file named after the artist (e.g., `Radiohead_Full_Catalog_Simplified.csv`) containing the final, clean catalog data.
+```bash
+# For example, if using Python:
+pip install -r requirements.txt
+
+# Or for Node.js:
+npm install
+```
+
+## Usage
+
+Provide instructions or examples for running or using the project:
+
+```bash
+# Example for running a main script:
+python main.py
+```
+*(Replace with actual usage instructions as code is added)*
+
+## Configuration
+
+Document any required environment variables or configuration files here.
+
+- Example: `DATABASE_URL`, `API_KEY`, etc.
+- Describe how to set up the configuration for development and production environments.
+
+## Contributing
+Contributions are welcome!  
+- MIT License
+
